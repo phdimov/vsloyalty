@@ -6,23 +6,22 @@ Class Transactions
 
     protected $users;
 
-    protected $last_monitor_date;
-
     public function __construct(Database $db)
     {
         $this->database = $db;
-        $this->last_monitor_date = $this->getLastJobTime();
         $this->users = new Users($db);
+        $this->vouchers = new Vouchers($db);
     }
 
     public function monitor()
     {
+        $last_monitor_date = ($this->getLastJobTime()) ? $this->getLastJobTime() : '2018-01-01';
         $sql = "SELECT user_id as 'userid', user_phone_num as 'phone', sum(price) as 'sum' FROM `transactions` WHERE date > '{$last_monitor_date}' GROUP BY DATE(date), userid";
         $result = $this->database->query($sql);
         foreach ($result->fetch_all(MYSQLI_ASSOC) as $res) {
-            $this->users->updateUserBalance($res);
+            $this->users->updateBalance($res);
+            $this->vouchers->
             $this->logJob();
-            die();
         }
     }
 
@@ -34,13 +33,13 @@ Class Transactions
     private function getLastJobTime() {
         $sql = "SELECT time FROM monitor ORDER BY time DESC LIMIT 0,1";
         $result = $this->database->query($sql);
-        $time = $result->fetch_all();
-        return $time[0];
+        $time = $result->fetch_assoc();
+        return $time['time'];
     }
 
     public function import($remotefile)
     {
-        $result = $db->query("SELECT date FROM transactions ORDER BY date DESC LIMIT 0,1");
+        $result = $this->database->query("SELECT date FROM transactions ORDER BY date DESC LIMIT 0,1");
         $t_check_date = $result->fetch_object();
         if ($t_check_date) {
             $transactionsLastEntry = new DateTime($t_check_date->date);

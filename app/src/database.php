@@ -37,10 +37,6 @@ class Database {
         return $escaped_string;
     }
 
-    public function the_insert_id($id) {
-        return $this->connection->insert_id;
-    }
-
     public function insertArr($Arr, $table) {
         $fields = array_keys($Arr);
         $values = array_values($Arr);

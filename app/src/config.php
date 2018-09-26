@@ -11,10 +11,13 @@ define('BASE_URL_USER', 'vs.order.retrievals');
 define('BASE_URL_PASS', 'OkGd1Mjh907Uw1SXqmI=');
 define('SHORTURL_API', 'AIzaSyA-7hVhbqpWzrSsqqL5YUZmhmbowqxAYbE');
 define('FTP_LOCAL', '../temp/');
+define('VOUCHER_VALUE', '10.00');
+define('VOUCHER_TRESHOLD', '100.00');
 
 $countryConfig = [
     'BE' => [
-        'voucherValue' => '10.00'
+        'voucherValue' => '10.00',
+        'voucherTreshold' =>'100.00'
     ],
     'GB' => [
         'voucherValue' => '10.00'

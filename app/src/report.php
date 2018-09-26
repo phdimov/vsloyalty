@@ -2,8 +2,7 @@
 
 class Report
 {
-
-    private static function get($remotefile)
+    public static function get($remotefile)
     {
         $bind_params = [
             'file_name' => $remotefile,
