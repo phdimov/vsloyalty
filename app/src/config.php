@@ -2,6 +2,7 @@
 
 use Symfony\Component\Dotenv\Dotenv;
 
+
 $dotenv = new Dotenv();
 $dotenv->load(__DIR__.'/.env');
 
@@ -18,6 +19,4 @@ define('SHORTURL_API', getenv('SHORTURL_API'));
 define('FTP_LOCAL', getenv('FTP_LOCAL'));
 define('VOUCHER_VALUE', getenv('VOUCHER_VALUE'));
 define('VOUCHER_TRESHOLD', getenv('VOUCHER_TRESHOLD'));
-echo getenv('DATABASENAME');
-
 ?>

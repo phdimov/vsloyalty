@@ -7,4 +7,6 @@ spl_autoload_register(function($className) {
 
 $db = new Database();
 $transactions = new Transactions($db);
+$users = new Users($db);
+$vouchers = new Vouchers($db);
 

@@ -13,7 +13,7 @@ class Vouchers
     {
         $sql = "SELECT * FROM vouchers WHERE userid='{$userid}'";
         $result = $this->database->query($sql);
-        if($result->num_rows > 0) {
+        if ($result->num_rows > 0) {
             print_r($result->fetch_all(MYSQLI_ASSOC));
             return TRUE;
         } else {
@@ -21,22 +21,47 @@ class Vouchers
         }
     }
 
-    public function determineVoucherCount($userid) {
-        $sql = "SELECT balance FROM users where userid = {$userid}";
-        $result = $this->database->query($sql);
-        $balance = $resul->fetch_all(MYSQLI_ASSOC);
-        return round($balance/ VOUCHER_TRESHOLD);
+    public function determineVoucherCount($transactionsArray)
+    {
+        $voucherCount = [];
+        $voucherCount['totalcount'] = 0;
 
+        foreach ($transactionsArray as $transactionData) {
+            $sql = "SELECT userid,balance FROM users where userid = {$transactionData['userid']}";
+            $result = $this->database->query($sql);
+            $balance = $result->fetch_all(MYSQLI_ASSOC);
+            $cnt = round($balance[0]['balance'] / VOUCHER_TRESHOLD);
+            if ($cnt > 0) {
+                $voucherCount['totalcount'] = $voucherCount['totalcount'] + $cnt;
+                $voucherCount[$transactionData['userid']] = $cnt;
+            }
+        }
+
+        return $voucherCount;
     }
 
-    public function addVoucher($userid, $count) {
+    public function addVoucher($voucherUserCount)
+    {
+
+        echo "Voucher counts: <br>";
+        echo "<pre>";
+        print_r($voucherUserCount);
+        echo "</pre>";
+
         $date = new DateTime();
         $created = $date->format("d/m/Y");
         $expires = $date->modify("+ 30 day")->format("d/m/Y");
-        for ($i = 0; $i =< $cnt; $i++) {
-            $sql = "INSERT into vouchers (`id`,`userid`, `created`, `expires`) VALUES('', '{$userid}','{$created}', '{$expires}')";
+
+        foreach ($voucherUserCount as $u => $v) {
+
+            for ($i = 0; $i <= $v; $i++) {
+                $sql = "INSERT INTO vouchers (`id`,`userid`, `created`, `expires`, `value`) VALUES('', '{$u}','{$created}', '{$expires}', ".VOUCHER_VALUE.")";
+                $this->database->query($sql);
+            }
+
         }
-        $this->database->query($sql);
+
+
     }
 
 }
