@@ -5,9 +5,6 @@ use Symfony\Component\Dotenv\Dotenv;
 $dotenv = new Dotenv();
 $dotenv->load(__DIR__.'/.env');
 
-// You can also load several files
-$dotenv->load(__DIR__.'/.env');
-
 // Database Connection Constants
 define('ENV', getenv('ENV'));
 define('DB_HOST', getenv('DB_HOST'));
