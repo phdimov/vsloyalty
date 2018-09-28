@@ -1,26 +1,26 @@
 <?php
 
-// Database Connection Constants
-define('ENV','development');
-define('DB_HOST','chilepayments-aurora-instance-0.czozouolf5xj.eu-west-2.rds.amazonaws.com');
-define('DB_USER','vsloyalty');
-define('DB_PASS','Z96Yd94o3ZdBYVsW');
-define('DB_NAME','vsloyalty');
-define('BASE_URL', 'https://vivastreet.egnyte.com/webdav/shared/vs.order.retrievals/');
-define('BASE_URL_USER', 'vs.order.retrievals');
-define('BASE_URL_PASS', 'OkGd1Mjh907Uw1SXqmI=');
-define('SHORTURL_API', 'AIzaSyA-7hVhbqpWzrSsqqL5YUZmhmbowqxAYbE');
-define('FTP_LOCAL', '../temp/');
-define('VOUCHER_VALUE', '10.00');
-define('VOUCHER_TRESHOLD', '100.00');
+use Symfony\Component\Dotenv\Dotenv;
 
-$countryConfig = [
-    'BE' => [
-        'voucherValue' => '10.00',
-        'voucherTreshold' =>'100.00'
-    ],
-    'GB' => [
-        'voucherValue' => '10.00'
-    ]
-];
+$dotenv = new Dotenv();
+$dotenv->load(__DIR__.'/.env');
+
+// You can also load several files
+$dotenv->load(__DIR__.'/.env');
+
+// Database Connection Constants
+define('ENV', getenv('ENV'));
+define('DB_HOST', getenv('DB_HOST'));
+define('DB_USER', getenv('DB_USER'));
+define('DB_PASS', getenv('DB_PASS'));
+define('DB_NAME', getenv('DATABASENAME'));
+define('BASE_URL', getenv('BASE_URL'));
+define('BASE_URL_USER', getenv('BASE_URL_USER'));
+define('BASE_URL_PASS', getenv('BASE_URL_PASS'));
+define('SHORTURL_API', getenv('SHORTURL_API'));
+define('FTP_LOCAL', getenv('FTP_LOCAL'));
+define('VOUCHER_VALUE', getenv('VOUCHER_VALUE'));
+define('VOUCHER_TRESHOLD', getenv('VOUCHER_TRESHOLD'));
+echo getenv('DATABASENAME');
+
 ?>

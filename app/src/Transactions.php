@@ -20,7 +20,8 @@ Class Transactions
         $result = $this->database->query($sql);
         foreach ($result->fetch_all(MYSQLI_ASSOC) as $res) {
             $this->users->updateBalance($res);
-            $this->vouchers->
+            $cnt = $this->vouchers->determineVoucherCount($res['userid'];
+            $this->vouchers->addVoucher($res['userid'], $cnt ); // may be 0 and that is fine.
             $this->logJob();
         }
     }
