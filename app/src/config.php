@@ -19,4 +19,6 @@ define('SHORTURL_API', getenv('SHORTURL_API'));
 define('FTP_LOCAL', getenv('FTP_LOCAL'));
 define('VOUCHER_VALUE', getenv('VOUCHER_VALUE'));
 define('VOUCHER_TRESHOLD', getenv('VOUCHER_TRESHOLD'));
+define('TWILIO_SID', getenv('TWILIO_SID'));
+define('TWILIO_TOKEN', getenv('TWILIO_TOKEN'));
 ?>
