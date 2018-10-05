@@ -10,7 +10,7 @@ class Users
         $this->database = $db;
     }
 
-    public function updateBalance($userArr)
+    public function addBalance($userArr)
     {
         foreach ($userArr as $user) {
             if ($this->check($user)) {
@@ -20,6 +20,15 @@ class Users
                 $this->add($user);
             }
         }
+    }
+
+    public function updateBalance($userid, $cnt)
+    {
+        $deduct = $cnt * VOUCHER_TRESHOLD;
+        $sql = "UPDATE users SET balance = `balance` - $deduct WHERE userid = '{$userid}'";
+        echo $sql;
+        $this->database->query($sql);
+
     }
 
     public function check($user)

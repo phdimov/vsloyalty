@@ -4,8 +4,6 @@ Class Transactions
 {
     protected $database;
 
-    protected $users;
-
     public function __construct(Database $db)
     {
         $this->database = $db;
@@ -24,6 +22,7 @@ Class Transactions
         $last_monitor_date = ($this->getLastJobTime()) ? $this->getLastJobTime() : '2018-01-01';
         $sql = "SELECT user_id as 'userid', user_phone_num as 'phone', sum(price) as 'sum' FROM `transactions` WHERE date > '{$last_monitor_date}' GROUP BY DATE(date), userid";
         $result = $this->database->query($sql);
+        $this->logJob();
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 

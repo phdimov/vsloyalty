@@ -2,7 +2,17 @@
 
 class Report
 {
-    public static function get($remotefile)
+
+    private $guzzle;
+    private $database;
+
+    function __construct(Database $db)
+    {
+        $this->guzzle = new GuzzleHttp\Client();
+        $this->database = $db;
+    }
+
+    public function get($remotefile)
     {
         $bind_params = [
             'file_name' => $remotefile,
@@ -13,9 +23,9 @@ class Report
 
         $fields = ['auth' => [$bind_params['user_name'], $bind_params['password']]];
 
-        $client = new GuzzleHttp\Client();
 
-        $response = $client->request("GET", $bind_params['base_url'] . $bind_params['file_name'], $fields, ['debug' => true]);
+
+        $response = $this->guzzle->request("GET", $bind_params['base_url'] . $bind_params['file_name'], $fields, ['debug' => true]);
         if ($response->getBody()->isReadable()) {
             if ($response->getStatusCode() == 200) {
                 // is this the proper way to retrieve mime type?
@@ -30,7 +40,7 @@ class Report
 
     }
 
-    public static function import($remotefile)
+    public function import($remotefile)
     {
         $result = $this->database->query("SELECT date FROM transactions ORDER BY date DESC LIMIT 0,1");
         $t_check_date = $result->fetch_object();
@@ -40,6 +50,7 @@ class Report
             $transactionsLastEntry = new DateTime('1982');
         }
         $counter = 0;
+        $rowcounter=0;
         $header = NULL;
         $data = array();
         $delimiter = ',';
@@ -137,9 +148,13 @@ class Report
                 $sql = "INSERT INTO transactions (`$fieldsList`) VALUES ($fieldValues)";
                 if (isset($fieldValues)) {
                     $result = $this->database->query($sql);
+                    $rowcounter++;
                 }
             }
 
         }
+
+        echo "$rowcounter rows imported.";
+
     }
 }

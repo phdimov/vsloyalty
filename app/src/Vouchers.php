@@ -4,9 +4,10 @@ class Vouchers
 {
     protected $database;
 
-    public function __construct(Database $db)
+    public function __construct(Database $db, Users $user)
     {
         $this->database = $db;
+        $this->user = $user;
     }
 
     public function checkVoucher($userid)
@@ -24,15 +25,15 @@ class Vouchers
     public function determineVoucherCount($transactionsArray)
     {
         $voucherCount = [];
-        $voucherCount['totalcount'] = 0;
+        //$voucherCount['totalcount'] = 0;
 
         foreach ($transactionsArray as $transactionData) {
             $sql = "SELECT userid,balance FROM users where userid = {$transactionData['userid']}";
             $result = $this->database->query($sql);
             $balance = $result->fetch_all(MYSQLI_ASSOC);
-            $cnt = round($balance[0]['balance'] / VOUCHER_TRESHOLD);
+            $cnt = (int) ($balance[0]['balance'] / VOUCHER_TRESHOLD);
             if ($cnt > 0) {
-                $voucherCount['totalcount'] = $voucherCount['totalcount'] + $cnt;
+               // $voucherCount['totalcount'] = $voucherCount['totalcount'] + $cnt;
                 $voucherCount[$transactionData['userid']] = $cnt;
             }
         }
@@ -42,6 +43,7 @@ class Vouchers
 
     public function addVoucher($voucherUserCount)
     {
+
 
         echo "Voucher counts: <br>";
         echo "<pre>";
@@ -54,12 +56,16 @@ class Vouchers
 
         foreach ($voucherUserCount as $u => $v) {
 
+            // we need to reset the user balances after we have added all the vouchers.
+            $this->user->updateBalance($u, $v);
+
             for ($i = 0; $i <= $v; $i++) {
                 $sql = "INSERT INTO vouchers (`id`,`userid`, `created`, `expires`, `value`) VALUES('', '{$u}','{$created}', '{$expires}', ".VOUCHER_VALUE.")";
                 $this->database->query($sql);
             }
 
         }
+
 
 
     }

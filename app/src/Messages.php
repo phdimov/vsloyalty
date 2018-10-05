@@ -1,23 +1,22 @@
 <?php
 
-
 class Messages {
 
     private $client;
     private $phone;
-    private $connection;
+    private $database;
 
-    function __construct(Database $db)
+    function __construct(Database $db, $client )
     {
-        $this->client = new Twilio(TWILIO_SID, TWILIO_TOKEN);
+        $this->client = $client;
         $this->phone = isset($_POST['phone']) ? $_POST['phone'] : null;
-        $this->connection = $db;
+        $this->database = $db;
     }
 
 
     public function sendSMS($from, $to, $message) {
 
-        $message = $this->client->create(
+        $message = $this->client->messages->create(
             $to,
             [
             "body" => $message,
@@ -33,7 +32,7 @@ class Messages {
 
         $sql = "SELECT users.userid as 'userid', users.phone as 'phone', count(vouchers.id) as 'voucher_count'  FROM users join vouchers on users.userid = vouchers.userid WHERE phone = '{$this->phone}' AND vouchers.date_redeemed = ''";
 
-        $result = $this->connection->query($sql);
+        $result = $this->database->query($sql);
 
         print(json_encode($result->fetch_all(MYSQLI_ASSOC)[0]));
 
@@ -44,12 +43,25 @@ class Messages {
 
         $sql = "SELECT * FROM vouchers JOIN users on vouchers.userid = users.userid WHERE users.phone =  '{$this->phone}' AND vouchers.date_redeemed = ''";
 
-        $result = $this->connection->query($sql);
+        $result = $this->database->query($sql);
         if ($result->num_rows > 0) {
             return true;
         } else {
             return false;
         }
+    }
+
+    public function sendTestSMS() {
+
+        $message = $this->client->messages->create(
+            '+32460202329',
+            [
+                "body" => 'BALANCE',
+                "from" => '+32460209483'
+            ]);
+
+        echo $message->sid;
+
     }
 
 }

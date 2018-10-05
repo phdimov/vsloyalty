@@ -1,5 +1,5 @@
 <?php
 include('../src/init.php');
 
-Report::get('BETransactions.csv');
-Report::import('BETransactions.csv');
+$report->get('BETransactions.csv');
+$report->import('BETransactions.csv');
