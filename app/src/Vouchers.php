@@ -10,13 +10,12 @@ class Vouchers
         $this->user = $user;
     }
 
-    public function checkVoucher($userid)
+    public function balance($userid)
     {
-        $sql = "SELECT * FROM vouchers WHERE userid='{$userid}'";
+        $sql = "SELECT count(vouchers.id) as 'count', users.phone as 'phone' FROM vouchers join users on vouchers.userid = users.userid WHERE vouchers.userid='{$userid}' AND date_redeemed =''";
         $result = $this->database->query($sql);
         if ($result->num_rows > 0) {
-            print_r($result->fetch_all(MYSQLI_ASSOC));
-            return TRUE;
+         return $result->fetch_all(MYSQLI_ASSOC);
         } else {
             return FALSE;
         }
@@ -25,15 +24,13 @@ class Vouchers
     public function determineVoucherCount($transactionsArray)
     {
         $voucherCount = [];
-        //$voucherCount['totalcount'] = 0;
 
         foreach ($transactionsArray as $transactionData) {
             $sql = "SELECT userid,balance FROM users where userid = {$transactionData['userid']}";
             $result = $this->database->query($sql);
             $balance = $result->fetch_all(MYSQLI_ASSOC);
-            $cnt = (int) ($balance[0]['balance'] / VOUCHER_TRESHOLD);
+            $cnt = (int)($balance[0]['balance'] / VOUCHER_TRESHOLD);
             if ($cnt > 0) {
-               // $voucherCount['totalcount'] = $voucherCount['totalcount'] + $cnt;
                 $voucherCount[$transactionData['userid']] = $cnt;
             }
         }
@@ -51,21 +48,20 @@ class Vouchers
         echo "</pre>";
 
         $date = new DateTime();
-        $created = $date->format("d/m/Y");
-        $expires = $date->modify("+ 30 day")->format("d/m/Y");
+        $created = $date->format("Y-m-d");
+        $expires = $date->modify("+ 30 day")->format("Y-m-d");
 
         foreach ($voucherUserCount as $u => $v) {
 
             // we need to reset the user balances after we have added all the vouchers.
             $this->user->updateBalance($u, $v);
 
-            for ($i = 0; $i <= $v; $i++) {
-                $sql = "INSERT INTO vouchers (`id`,`userid`, `created`, `expires`, `value`) VALUES('', '{$u}','{$created}', '{$expires}', ".VOUCHER_VALUE.")";
+            for ($i = 0; $i < $v; $i++) {
+                $sql = "INSERT INTO vouchers (`id`,`userid`, `created`, `expires`, `value`) VALUES('', '{$u}','{$created}', '{$expires}', " . VOUCHER_VALUE . ")";
                 $this->database->query($sql);
             }
 
         }
-
 
 
     }
