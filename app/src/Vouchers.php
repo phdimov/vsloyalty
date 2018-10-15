@@ -15,7 +15,7 @@ class Vouchers
         $sql = "SELECT count(vouchers.id) as 'count', users.phone as 'phone' FROM vouchers join users on vouchers.userid = users.userid WHERE vouchers.userid='{$userid}' AND date_redeemed =''";
         $result = $this->database->query($sql);
         if ($result->num_rows > 0) {
-         return $result->fetch_all(MYSQLI_ASSOC);
+            return $result->fetch_all(MYSQLI_ASSOC);
         } else {
             return FALSE;
         }
@@ -40,13 +40,6 @@ class Vouchers
 
     public function addVoucher($voucherUserCount)
     {
-
-
-        echo "Voucher counts: <br>";
-        echo "<pre>";
-        print_r($voucherUserCount);
-        echo "</pre>";
-
         $date = new DateTime();
         $created = $date->format("Y-m-d");
         $expires = $date->modify("+ 30 day")->format("Y-m-d");
@@ -59,6 +52,7 @@ class Vouchers
             for ($i = 0; $i < $v; $i++) {
                 $sql = "INSERT INTO vouchers (`id`,`userid`, `created`, `expires`, `value`) VALUES('', '{$u}','{$created}', '{$expires}', " . VOUCHER_VALUE . ")";
                 $this->database->query($sql);
+                echo "New voucher added for " . $u;
             }
 
         }
