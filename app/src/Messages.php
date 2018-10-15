@@ -14,9 +14,11 @@ class Messages
         $this->phone = isset($_POST['body']) ? $_POST['body'] : null;
         $this->database = $db;
         $this->guzzle = new GuzzleHttp\Client();
+        $this->logger = new Logger();
     }
 
-    private function addLog($from, $to, $message, $messagesid) {
+    private function addSMSLog($from, $to, $message, $messagesid)
+    {
 
         $sql = "SELECT userid from users where phone = '{$to}'";
         $result = $this->database->query($sql);
@@ -36,7 +38,7 @@ class Messages
                     "from" => $from
                 ]);
 
-            $this->addLog($from, $to, $message, $message->sid);
+            $this->addSMSLog($from, $to, $message, $message->sid);
 
             return $message->sid;
         }
@@ -46,7 +48,7 @@ class Messages
             echo "| To:" . $to;
             echo "| Message:" . $message;
 
-            $this->addLog($from, $to, $message, $messageid);
+            $this->addSMSLog($from, $to, $message, $messageid);
 
         }
 
@@ -153,6 +155,7 @@ class Messages
                 }
 
                 $this->sendSMS('+32460209483', '+447493077820', $message, 'dev');
+                $this->logger->add($message, 'UserNotification');
 
             }
 
@@ -170,6 +173,8 @@ class Messages
                 $message = "You have " . $row['count'] . " expiring vouchers in the next 7 days. Contact us today to redeem.";
             }
             $this->sendSMS('+32460209483', $row['phone'], $message, 'dev');
+
+            $this->logger->add($row['phone'] . $message, 'VoucherExpiration');
         }
     }
 
@@ -181,7 +186,7 @@ class Messages
                 [
                     'headers' => [
                         "accept" => "application/json",
-                        "authorization" => "b6cc6e4e6f16414ca896a36b9e33928991ea1d53",
+                        "authorization" => EMAIL_API_KEY,
                         "content-type" => "application/json"
                     ],
                     'body' => '{
