@@ -1,4 +1,4 @@
 <?php
 include('../src/init.php');
 
-$messages->sendTestSMS('REDEEM');
+$messages->sendTestSMS('How do I REDEEM my voucher');

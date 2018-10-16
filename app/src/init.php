@@ -17,3 +17,4 @@ $users = new Users($db);
 $vouchers = new Vouchers($db, $users);
 $messages = new Messages($db, $client, $logger);
 $report = new Report($db);
+$api = new Api($db);
