@@ -17,10 +17,25 @@ Class Transactions
 
     }
 
+    public function truncateDb ()
+    {
+         $sql = "TRUNCATE `logger`";
+         $this->database->query($sql);
+        $sql = "TRUNCATE `monitor`";
+        $this->database->query($sql);
+        $sql = "TRUNCATE `smslog`";
+        $this->database->query($sql);
+        $sql = "TRUNCATE `users`";
+        $this->database->query($sql);
+        $sql = "TRUNCATE `vouchers`";
+        $this->database->query($sql);
+        echo "DB truncated";
+    }
+
     public function monitor()
     {
         $last_monitor_date = ($this->getLastJobTime()) ? $this->getLastJobTime() : '2018-01-01';
-        $sql = "SELECT user_id as 'userid', user_phone_num as 'phone', sum(price) as 'sum' FROM `transactions` WHERE date > '{$last_monitor_date}' GROUP BY DATE(date), userid";
+        $sql = "SELECT user_id as 'userid', user_phone_num as 'phone', sum(price) as 'sum' FROM `transactions` WHERE date > '{$last_monitor_date}' GROUP BY userid";
         $result = $this->database->query($sql);
         $this->logJob();
         return $result->fetch_all(MYSQLI_ASSOC);

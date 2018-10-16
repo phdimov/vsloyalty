@@ -5,11 +5,13 @@ class Report
 
     private $guzzle;
     private $database;
+    private $logger;
 
     function __construct(Database $db)
     {
         $this->guzzle = new GuzzleHttp\Client();
         $this->database = $db;
+        $this->logger = new Logger($db);
     }
 
     public function get($remotefile)
@@ -155,6 +157,7 @@ class Report
         }
 
         echo "$rowcounter rows imported.";
+        $this->logger->add('transactions import', 'Reports');
 
     }
 }

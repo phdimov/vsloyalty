@@ -52,7 +52,8 @@ class Vouchers
             for ($i = 0; $i < $v; $i++) {
                 $sql = "INSERT INTO vouchers (`id`,`userid`, `created`, `expires`, `value`) VALUES('', '{$u}','{$created}', '{$expires}', " . VOUCHER_VALUE . ")";
                 $this->database->query($sql);
-                echo "New voucher added for " . $u;
+                $logmessage =  "New voucher added for " . $u;
+               // $logger->add($logmessage, 'Vouchers');
             }
 
         }

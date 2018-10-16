@@ -15,5 +15,5 @@ $db = new Database();
 $transactions = new Transactions($db);
 $users = new Users($db);
 $vouchers = new Vouchers($db, $users);
-$messages = new Messages($db, $client);
+$messages = new Messages($db, $client, $logger);
 $report = new Report($db);

@@ -14,7 +14,8 @@ class Messages
         $this->phone = isset($_POST['body']) ? $_POST['body'] : null;
         $this->database = $db;
         $this->guzzle = new GuzzleHttp\Client();
-        $this->logger = new Logger();
+        $this->logger = new Logger($db);
+
     }
 
     private function addSMSLog($from, $to, $message, $messagesid)
@@ -54,11 +55,12 @@ class Messages
 
     }
 
-    public function incoming_balance()
+    public function incoming($type)
     {
 
+        $sql = "SELECT users.userid as 'userid', users.phone as 'phone', count(vouchers.id) as 'voucher_count'  FROM users join vouchers on users.userid = vouchers.userid WHERE RIGHT(phone, " . PHONELENGTH . ") = RIGHT('{$this->phone}'," . PHONELENGTH . ") AND vouchers.date_redeemed = ''";
 
-        $sql = "SELECT users.userid as 'userid', users.phone as 'phone', count(vouchers.id) as 'voucher_count'  FROM users join vouchers on users.userid = vouchers.userid WHERE phone LIKE '%{$this->phone}%' AND vouchers.date_redeemed = ''";
+        echo $sql;
 
         $result = $this->database->query($sql);
 
@@ -66,56 +68,27 @@ class Messages
 
         if ($userBalance['voucher_count'] === '0') {
 
-            $message = "You don't have any vouchers at the moment. Keep spending :)";
+            $message = $this->getMessageBody($type, $userBalance, 'novouchers');
 
         } elseif ($userBalance['voucher_count'] === '1') {
 
-            $message = "BALANCE: You have " . $userBalance['voucher_count'] . " voucher with us. Call 222-222-2222 to redeem.";
+            $message = $this->getMessageBody($type, $userBalance, 'single');
 
         } else {
 
-            $message = "BALANCE: You have " . $userBalance['voucher_count'] . " vouchers with us. Call 222-222-2222 to redeem.";
+            $message = $this->getMessageBody($type, $userBalance, 'plural');
 
         }
 
 
         $this->sendSMS('+32460202329', $userBalance['phone'], $message, 'dev');
 
+        if (($type === 'redeem') && ($userBalance['voucher_count'] != '0')) {
 
-    }
-
-    public function incoming_redeem()
-    {
-
-        $sql = "SELECT users.userid as 'userid', users.phone as 'phone', count(vouchers.id) as 'voucher_count'  FROM users join vouchers on users.userid = vouchers.userid WHERE phone LIKE '%{$this->phone}%' AND vouchers.date_redeemed = ''";
-
-
-        $result = $this->database->query($sql);
-
-        $userBalance = $result->fetch_all(MYSQLI_ASSOC)[0];
-
-        if ($userBalance['voucher_count'] === '0') {
-
-            $message = "You don't have any vouchers at the moment. Keep spending :)";
-
-        } elseif ($userBalance['voucher_count'] === '1') {
-
-            $message = "REDEEEM: You have " . $userBalance['voucher_count'] . " voucher with us. Customer Service has been notified to contact you";
-
-        } else {
-
-            $message = "REDEEM: You have " . $userBalance['voucher_count'] . " vouchers with us. Customer Service has been notified to contact you.";
-
+            $emailBody = $this->getMessageBody($type, $userBalance, 'email');
+            $this->sendEmail("petar@vivastreet.com", $emailBody);
         }
 
-
-        $this->sendSMS('+32460202329', $userBalance['phone'], $message, 'dev');
-
-        $emailBody = "userid:" . $userBalance['userid'] . "<br>";
-        $emailBody .= "phone:" . $userBalance['phone'] . "<br>";
-        $emailBody .= "Count:" . $userBalance['voucher_count'] . "<br>";
-
-        $this->sendEmail("petar@vivastreet.com", $emailBody);
     }
 
     public function sendTestSMS($message)
@@ -129,6 +102,21 @@ class Messages
             ]);
 
         echo $message->sid;
+
+    }
+
+    private function getMessageBody($type, $optionArr, $misc)
+    {
+
+        $messageBody['redeem']['single'] = "REDEEEM: You have " . $optionArr['voucher_count'] . " voucher with us. Customer Service has been notified to contact you";
+        $messageBody['redeem']['plural'] = "REDEEM: You have " . $optionArr['voucher_count'] . " vouchers with us. Customer Service has been notified to contact you.";
+        $messageBody['redeem']['novouchers'] = "You don't have any vouchers at the moment. Keep spending :)";
+        $messageBody['balance']['single'] = "BALANCE: You have " . $optionArr['voucher_count'] . " voucher with us. Call 222-222-2222 to redeem.";
+        $messageBody['balance']['plural'] = "BALANCE: You have " . $optionArr['voucher_count'] . " vouchers with us. Call 222-222-2222 to redeem.";
+        $messageBody['balance']['novouchers'] = "You don't have any vouchers at the moment. Keep spending :)";
+        $messageBody['redeem']['email'] = "userid:" . $optionArr['userid'] . "<br>" . "phone:" . $optionArr['phone'] . "<br>" . "Count:" . $optionArr['voucher_count'] . "<br>";
+
+        return $messageBody[$type][$misc];
 
     }
 
@@ -174,7 +162,7 @@ class Messages
             }
             $this->sendSMS('+32460209483', $row['phone'], $message, 'dev');
 
-            $this->logger->add($row['phone'] . $message, 'VoucherExpiration');
+            $this->logger->add($row['userid'] . $message, 'VoucherExpiration');
         }
     }
 

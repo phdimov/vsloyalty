@@ -4,10 +4,12 @@ class Users
 {
 
     protected $database;
+    protected $logger;
 
     public function __construct(Database $db)
     {
         $this->database = $db;
+        $this->logger = new Logger($db);
     }
 
     public function addBalance($userArr)
@@ -16,8 +18,13 @@ class Users
             if ($this->check($user)) {
                 $sql = "UPDATE users SET  balance = `balance` + {$user['sum']}, total = `total` +  {$user['sum']} WHERE userid = '{$user['userid']}'";
                 $this->database->query($sql);
+                $this->logger->add("updated user balance ".$user['userid'], 'Users');
             } else {
-                $this->add($user);
+                $this->addUser($user);
+                $this->logger->add("added new user ".$user['userid'], 'Users');
+                $sql = "UPDATE users SET  balance = `balance` + {$user['sum']}, total = `total` +  {$user['sum']} WHERE userid = '{$user['userid']}'";
+                $this->database->query($sql);
+                $this->logger->add("updated user balance ".$user['userid'], 'Users');
             }
         }
     }
@@ -26,7 +33,7 @@ class Users
     {
         $deduct = $cnt * VOUCHER_TRESHOLD;
         $sql = "UPDATE users SET balance = `balance` - $deduct WHERE userid = '{$userid}'";
-        echo $sql;
+
         $this->database->query($sql);
 
     }
@@ -42,9 +49,9 @@ class Users
         }
     }
 
-    public function add($user)
+    public function addUser($user)
     {
-        $sql = "INSERT INTO users (`userid`, `phone`, `balance`, `total`) VALUES('{$user['userid']}',  '{$user['phone']}', '{$user['sum']}','{$user['sum']}')";
+        $sql = "INSERT INTO users (`userid`, `phone`, `balance`, `total`) VALUES('{$user['userid']}',  '{$user['phone']}', '0','0')";
         $this->database->query($sql);
     }
 
