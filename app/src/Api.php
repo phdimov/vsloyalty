@@ -1,6 +1,7 @@
 <?php
 
-class Api {
+class Api
+{
 
     protected $database;
     protected $body;
@@ -15,16 +16,12 @@ class Api {
     {
         $userid = $this->database->escape_string($this->body);
 
-        $sql = "SELECT vouchers.userid as 'userid',  count(vouchers.id) as 'voucher_count'  FROM vouchers WHERE userid =  '{$userid}' AND date_redeemed =''";
-
-        echo $sql;
+        $sql = "SELECT vouchers.userid as 'userid',  count(vouchers.id) as 'voucher_count'  FROM vouchers WHERE userid =  '{$userid}' AND date_redeemed ='' AND DATE(vouchers.expires) > CURRENT_DATE";
 
         $result = $this->database->query($sql);
 
-        var_dump($result->fetch_all(MYSQLI_ASSOC)[0];)
-
+        return print(json_encode($result->fetch_all(MYSQLI_ASSOC)[0]));
     }
-
 
 
 }

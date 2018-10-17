@@ -58,7 +58,7 @@ class Messages
     public function incoming($type)
     {
 
-        $sql = "SELECT users.userid as 'userid', users.phone as 'phone', count(vouchers.id) as 'voucher_count'  FROM users join vouchers on users.userid = vouchers.userid WHERE RIGHT(phone, " . PHONELENGTH . ") = RIGHT('{$this->phone}'," . PHONELENGTH . ") AND vouchers.date_redeemed = ''";
+        $sql = "SELECT users.userid as 'userid', users.phone as 'phone', count(vouchers.id) as 'voucher_count'  FROM users join vouchers on users.userid = vouchers.userid WHERE RIGHT(phone, " . PHONELENGTH . ") = RIGHT('{$this->phone}'," . PHONELENGTH . ") AND vouchers.date_redeemed = '' AND DATE(vouchers.expires) > CURRENT_DATE ";
 
         echo $sql;
 
