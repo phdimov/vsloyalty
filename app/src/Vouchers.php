@@ -3,11 +3,14 @@
 class Vouchers
 {
     protected $database;
+    protected $user;
+    protected $logger;
 
     public function __construct(Database $db, Users $user)
     {
         $this->database = $db;
         $this->user = $user;
+        $this->logger = new Logger($db);
     }
 
     public function balance($userid)
@@ -53,7 +56,7 @@ class Vouchers
                 $sql = "INSERT INTO vouchers (`id`,`userid`, `created`, `expires`, `value`) VALUES('', '{$u}','{$created}', '{$expires}', " . VOUCHER_VALUE . ")";
                 $this->database->query($sql);
                 $logmessage =  "New voucher added for " . $u;
-               // $logger->add($logmessage, 'Vouchers');
+                $this->logger->add($logmessage, 'Vouchers');
             }
 
         }

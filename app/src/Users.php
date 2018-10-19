@@ -18,13 +18,13 @@ class Users
             if ($this->check($user)) {
                 $sql = "UPDATE users SET  balance = `balance` + {$user['sum']}, total = `total` +  {$user['sum']} WHERE userid = '{$user['userid']}'";
                 $this->database->query($sql);
-                $this->logger->add("updated user balance ".$user['userid'], 'Users');
+                $this->logger->add("Updated user balance ".$user['userid'], 'Users');
             } else {
                 $this->addUser($user);
-                $this->logger->add("added new user ".$user['userid'], 'Users');
+                $this->logger->add("Added new user ".$user['userid'], 'Users');
                 $sql = "UPDATE users SET  balance = `balance` + {$user['sum']}, total = `total` +  {$user['sum']} WHERE userid = '{$user['userid']}'";
                 $this->database->query($sql);
-                $this->logger->add("updated user balance ".$user['userid'], 'Users');
+                $this->logger->add("Updated user balance ".$user['userid'], 'Users');
             }
         }
     }
@@ -33,8 +33,8 @@ class Users
     {
         $deduct = $cnt * VOUCHER_TRESHOLD;
         $sql = "UPDATE users SET balance = `balance` - $deduct WHERE userid = '{$userid}'";
-
         $this->database->query($sql);
+        $this->logger->add("Updated user balance ".$user['userid'], 'Users');
 
     }
 
@@ -53,6 +53,7 @@ class Users
     {
         $sql = "INSERT INTO users (`userid`, `phone`, `balance`, `total`) VALUES('{$user['userid']}',  '{$user['phone']}', '0','0')";
         $this->database->query($sql);
+        $this->logger->add("Added new user ".$user['userid'], 'Users');
     }
 
 }

@@ -3,10 +3,13 @@
 Class Transactions
 {
     protected $database;
+    protected $logger;
 
     public function __construct(Database $db)
     {
         $this->database = $db;
+        $this->logger = new Logger($db);
+
     }
 
     public function destroySomeJobLogs ()
@@ -19,8 +22,6 @@ Class Transactions
 
     public function truncateDb ()
     {
-         $sql = "TRUNCATE `logger`";
-         $this->database->query($sql);
         $sql = "TRUNCATE `monitor`";
         $this->database->query($sql);
         $sql = "TRUNCATE `smslog`";
@@ -30,6 +31,7 @@ Class Transactions
         $sql = "TRUNCATE `vouchers`";
         $this->database->query($sql);
         echo "DB truncated";
+        $this->logger->add('DB Cleaned', 'Monitor');
     }
 
     public function monitor()
@@ -38,7 +40,9 @@ Class Transactions
         $sql = "SELECT user_id as 'userid', user_phone_num as 'phone', sum(price) as 'sum' FROM `transactions` WHERE date > '{$last_monitor_date}' GROUP BY userid";
         $result = $this->database->query($sql);
         $this->logJob();
+        $this->logger->add( 'Moritoring job ran - '.$result->num_rows, 'Monitor');
         return $result->fetch_all(MYSQLI_ASSOC);
+
     }
 
     private function logJob() {

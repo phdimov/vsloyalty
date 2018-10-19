@@ -33,10 +33,11 @@ class Report
                 // is this the proper way to retrieve mime type?
                 //$mime = array_shift(array_values($response->getHeaders()->get('Content-Type')));
                 file_put_contents(FTP_LOCAL . $remotefile, $response->getBody());
-                error_log("Successfully downloaded $remotefile\n\r.");
+                $logmessage = "Successfully downloaded $remotefile\n\r.";
+                $this->logger->add($logmessage,'Import');
                 return true;
             } else {
-                error_log("Failed to download $remotefile\n\r.");
+                $this->logger->add($logmessage,'Import');
             }
         }
 
@@ -158,8 +159,8 @@ class Report
 
         }
 
-        echo "$rowcounter rows imported.";
-        $this->logger->add('transactions import', 'Reports');
+        $logmessage = "$rowcounter rows imported.";
+        $this->logger->add($logmessage, 'Import');
 
     }
 }

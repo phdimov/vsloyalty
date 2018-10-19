@@ -137,9 +137,9 @@ class Messages
                 $phone = $result->fetch_all();
 
                 if ($u > 1) {
-                    $message = "phone " . $phone['0']['0'] . " has $v new vouchers.";
+                    $message = "Phone " . $phone['0']['0'] . " has $v new vouchers.";
                 } else {
-                    $message = "phone " . $phone['0']['0'] . " has $v new voucher.";
+                    $message = "Phone " . $phone['0']['0'] . " has $v new voucher.";
                 }
 
                 $this->sendSMS('+32460209483', '+447493077820', $message, 'dev');
