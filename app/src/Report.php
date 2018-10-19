@@ -122,7 +122,9 @@ class Report
                         'type' => 'Type',
                         'social_status' => 'Social Status',
                         'init_by' => 'Page Type',
-                        'platform' => 'Platform');
+                        'platform' => 'Platform',
+                        'clad_phone' => 'Clad Phone'
+                    );
 
                 //fix the name
 
