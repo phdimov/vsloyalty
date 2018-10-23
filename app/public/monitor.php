@@ -1,6 +1,6 @@
 <?php
 include('../src/init.php');
-include('../public/cron.php');
+//include('../public/cron.php');
 
 // for testing
 $transactions->truncateDb();
@@ -10,7 +10,7 @@ $newTransactions = $transactions->monitor();
 
 
 // Add the new balances to the users balances
-$users->addBalance($newTransactions);
+$users->process($newTransactions);
 
 // Check how many vouchers to give out
 $voucherUserCount = $vouchers->determineVoucherCount($newTransactions);

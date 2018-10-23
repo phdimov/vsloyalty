@@ -24,4 +24,6 @@ define('TWILIO_TOKEN', getenv('TWILIO_TOKEN'));
 define('LOYALTY_STATIC', getenv('LOYALTY_STATIC'));
 define('EMAIL_API_KEY', getenv('EMAIL_API_KEY'));
 define('PHONELENGTH', getenv('PHONELENGTH'));
+define('PHONEREGEX', getenv('PHONEREGEX'));
+define('GEOS', getenv('GEOS'));
 ?>
