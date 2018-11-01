@@ -88,7 +88,7 @@ class Users
             $this->addBalance($user);
             return true;
         } else {
-            $this->logger->add("User not allowed: " . $user['userid'], 'Users');
+            $this->logger->add("User not allowed (bad phone number): " . $user['userid'], 'Users');
             return false;
         }
 

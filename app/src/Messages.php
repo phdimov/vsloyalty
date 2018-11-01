@@ -152,13 +152,13 @@ class Messages
 
     public function expiringVouchers()
     {
-        $sql = "SELECT count(vouchers.id) as 'count', vouchers.userid as 'userid', users.phone as 'phone' FROM `vouchers` JOIN users ON vouchers.userid = users.userid WHERE DATE(expires) = DATE_ADD(CURRENT_DATE, INTERVAL 7 DAY) GROUP BY userid";
+        $sql = "SELECT count(vouchers.id) as 'count', vouchers.userid as 'userid', users.phone as 'phone' FROM `vouchers` JOIN users ON vouchers.userid = users.userid WHERE DATE(expires) = DATE_ADD(CURRENT_DATE, INTERVAL 3 DAY) GROUP BY userid";
         $result = $this->database->query($sql);
         foreach ($result->fetch_all(MYSQLI_ASSOC) as $row) {
             if ($row['count'] === '1') {
-                $message = "You have " . $row['count'] . " expiring voucher in the next 7 days. Contact us today to redeem.";
+                $message = " You have " . $row['count'] . " expiring voucher in the next 7 days. Contact us today to redeem.";
             } else {
-                $message = "You have " . $row['count'] . " expiring vouchers in the next 7 days. Contact us today to redeem.";
+                $message = " You have " . $row['count'] . " expiring vouchers in the next 7 days. Contact us today to redeem.";
             }
             $this->sendSMS('+32460209483', $row['phone'], $message, 'dev');
 
