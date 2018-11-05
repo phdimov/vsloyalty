@@ -5,13 +5,13 @@ class Users
 
     protected $database;
     protected $logger;
-    protected $message
+    protected $message;
 
-    public function __construct(Database $db)
+    public function __construct(Database $db, $client)
     {
         $this->database = $db;
         $this->logger = new Logger($db);
-        $this->message = new Messages($db);
+        $this->message = new Messages($db, $client);
     }
 
     public function process($userArr)
@@ -87,7 +87,7 @@ class Users
             $sql = "INSERT INTO users (`userid`, `phone`, `balance`, `total`) VALUES('{$user['userid']}',  '{$aphone}', '0','0')";
             $this->database->query($sql);
             $this->logger->add("Added new user " . $user['userid'], 'Users');
-            $this->message->sendSMS('+32460209483', '+447493077820', 'Welcome Message', 'dev');
+            $this->message->sendSMS('+447493077820', 'Welcome Message', 'prod');
             $this->addBalance($user);
             return true;
         } else {

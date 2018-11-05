@@ -21,9 +21,12 @@ define('VOUCHER_VALUE', getenv('VOUCHER_VALUE'));
 define('VOUCHER_TRESHOLD', getenv('VOUCHER_TRESHOLD'));
 define('TWILIO_SID', getenv('TWILIO_SID'));
 define('TWILIO_TOKEN', getenv('TWILIO_TOKEN'));
+define('TWILIO_FROM', getenv('TWILIO_FROM'));
 define('LOYALTY_STATIC', getenv('LOYALTY_STATIC'));
 define('EMAIL_API_KEY', getenv('EMAIL_API_KEY'));
 define('PHONELENGTH', getenv('PHONELENGTH'));
 define('PHONEREGEX', getenv('PHONEREGEX'));
 define('GEOS', getenv('GEOS'));
+define('SUBCATEGORY', getenv('SUBCATEGORY'));
+define('USERTYPE', getenv('USERTYPE'));
 ?>

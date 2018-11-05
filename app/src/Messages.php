@@ -20,7 +20,6 @@ class Messages
 
     private function addSMSLog($from, $to, $message, $messagesid)
     {
-
         $sql = "SELECT userid from users where phone = '{$to}'";
         $result = $this->database->query($sql);
         $userid = $result->fetch_all()[0][0];
@@ -29,14 +28,14 @@ class Messages
     }
 
 
-    public function sendSMS($from, $to, $message, $flag)
+    public function sendSMS($to, $message, $flag)
     {
         if ($flag === 'prod') {
             $message = $this->client->messages->create(
                 $to,
                 [
                     "body" => $message,
-                    "from" => $from
+                    "from" => TWILIO_FROM
                 ]);
 
             $this->addSMSLog($from, $to, $message, $message->sid);
@@ -81,7 +80,7 @@ class Messages
         }
 
 
-        $this->sendSMS('+32460202329', $userBalance['phone'], $message, 'dev');
+        $this->sendSMS($userBalance['phone'], $message, 'dev');
 
         if (($type === 'redeem') && ($userBalance['voucher_count'] != '0')) {
 
@@ -108,11 +107,11 @@ class Messages
     private function getMessageBody($type, $optionArr, $misc)
     {
 
-        $messageBody['redeem']['single'] = "REDEEEM: You have " . $optionArr['voucher_count'] . " voucher with us. Customer Service has been notified to contact you";
-        $messageBody['redeem']['plural'] = "REDEEM: You have " . $optionArr['voucher_count'] . " vouchers with us. Customer Service has been notified to contact you.";
+        $messageBody['redeem']['single'] ="Le montant de votre/vos voucher(s) Vivastreet est : " . $optionArr['voucher_count'] . " . Si vous souhaitez utiliser votre/vos voucher(s), veuillez cliquer sur le lien ci-dessous: ";
+        $messageBody['redeem']['plural'] = "Le montant de votre/vos voucher(s) Vivastreet est : " . $optionArr['voucher_count'] . " . Si vous souhaitez utiliser votre/vos voucher(s), veuillez cliquer sur le lien ci-dessous: ";
         $messageBody['redeem']['novouchers'] = "You don't have any vouchers at the moment. Keep spending :)";
-        $messageBody['balance']['single'] = "BALANCE: You have " . $optionArr['voucher_count'] . " voucher with us. Call 222-222-2222 to redeem.";
-        $messageBody['balance']['plural'] = "BALANCE: You have " . $optionArr['voucher_count'] . " vouchers with us. Call 222-222-2222 to redeem.";
+        $messageBody['balance']['single'] = "Le montant de votre/vos voucher(s) Vivastreet est : " . $optionArr['voucher_count'] . " . Si vous souhaitez utiliser votre/vos voucher(s), veuillez cliquer sur le lien ci-dessous: ";
+        $messageBody['balance']['plural'] = "Le montant de votre/vos voucher(s) Vivastreet est : " . $optionArr['voucher_count'] . " . Si vous souhaitez utiliser votre/vos voucher(s), veuillez cliquer sur le lien ci-dessous: ";
         $messageBody['balance']['novouchers'] = "You don't have any vouchers at the moment. Keep spending :)";
         $messageBody['redeem']['email'] = "userid:" . $optionArr['userid'] . "<br>" . "phone:" . $optionArr['phone'] . "<br>" . "Count:" . $optionArr['voucher_count'] . "<br>";
 
@@ -142,7 +141,7 @@ class Messages
                     $message = "Phone " . $phone['0']['0'] . " has $v new voucher.";
                 }
 
-                $this->sendSMS('+32460209483', '+447493077820', $message, 'dev');
+                $this->sendSMS('+447493077820', $message, 'dev');
                 $this->logger->add($message, 'UserNotification');
 
             }
@@ -160,7 +159,7 @@ class Messages
             } else {
                 $message = " You have " . $row['count'] . " expiring vouchers in the next 7 days. Contact us today to redeem.";
             }
-            $this->sendSMS('+32460209483', $row['phone'], $message, 'dev');
+            $this->sendSMS( $row['phone'], $message, 'dev');
 
             $this->logger->add($row['userid'] . $message, 'VoucherExpiration');
         }

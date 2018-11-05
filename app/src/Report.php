@@ -126,8 +126,10 @@ class Report
                         'platform' => 'Platform',
                         'clad_phone' => 'Clad Phone'
                     );
-
-                //fix the name
+                // scope detail for imported transactions to be only from a specific category or user type
+                if(($data['Subcategory'] != SUBCATEGORY) ||  ($data['Social Status'] != USERTYPE)) {
+                    continue;
+                }
 
                 $patterns = array();
                 $patterns[0] = '/[0-9]*/';
