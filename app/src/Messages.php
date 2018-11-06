@@ -23,32 +23,34 @@ class Messages
         $sql = "SELECT userid from users where phone = '{$to}'";
         $result = $this->database->query($sql);
         $userid = $result->fetch_all()[0][0];
-        $sql = "INSERT INTO smslog (`userid`, `numberfrom`, `numberto`, `message`, `smsid`) VALUES('{$userid}','{$from}', '{$to}', '{$message}',  '000000000000')";
+        $sql = "INSERT INTO smslog (`userid`, `numberfrom`, `numberto`, `message`, `smsid`) VALUES('{$userid}','{$from}', '{$to}', '{$message}', '{$messagesid}' )";
         $this->database->query($sql);
     }
 
 
     public function sendSMS($to, $message, $flag)
     {
-        if ($flag === 'prod') {
-            $message = $this->client->messages->create(
+        if ($flag === 'PRODUCTION') {
+
+            $sms = $this->client->messages->create(
                 $to,
                 [
                     "body" => $message,
                     "from" => TWILIO_FROM
                 ]);
 
-            $this->addSMSLog($from, $to, $message, $message->sid);
+            $this->addSMSLog(TWILIO_FROM, $to, $message, $sms->sid);
 
-            return $message->sid;
+            return $sms->sid;
         }
 
-        if ($flag === 'dev') {
-            echo "SMS Data - From:" . $from;
+        if ($flag === 'DEVELOPMENT') {
+
+            echo "SMS Data - From:" . TWILIO_FROM;
             echo "| To:" . $to;
             echo "| Message:" . $message;
 
-            $this->addSMSLog($from, $to, $message, $messageid);
+            $this->addSMSLog(TWILIO_FROM, $to, $message, '0000');
 
         }
 
@@ -80,7 +82,7 @@ class Messages
         }
 
 
-        $this->sendSMS($userBalance['phone'], $message, 'dev');
+        $this->sendSMS($userBalance['phone'], $message, ENV);
 
         if (($type === 'redeem') && ($userBalance['voucher_count'] != '0')) {
 
@@ -141,7 +143,7 @@ class Messages
                     $message = "Phone " . $phone['0']['0'] . " has $v new voucher.";
                 }
 
-                $this->sendSMS('+447493077820', $message, 'dev');
+                $this->sendSMS( $phone['0']['0'] , $message, ENV);
                 $this->logger->add($message, 'UserNotification');
 
             }
@@ -159,7 +161,7 @@ class Messages
             } else {
                 $message = " You have " . $row['count'] . " expiring vouchers in the next 7 days. Contact us today to redeem.";
             }
-            $this->sendSMS( $row['phone'], $message, 'dev');
+            $this->sendSMS( $row['phone'], $message, ENV);
 
             $this->logger->add($row['userid'] . $message, 'VoucherExpiration');
         }

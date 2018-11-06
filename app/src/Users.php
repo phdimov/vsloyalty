@@ -19,10 +19,10 @@ class Users
 
         foreach ($userArr as $user) {
 
-                if(!$this->checkGeo($user)) {
-                    $this->logger->add("User geo  ".$user['post_code'] ." not in geo list: ".$user['userid'], 'Users');
-                    continue;
-                };
+            if (!$this->checkGeo($user)) {
+                $this->logger->add("User geo  " . $user['post_code'] . " not in geo list: " . $user['userid'], 'Users');
+                continue;
+            };
 
             if ($this->check($user)) {
 
@@ -42,10 +42,9 @@ class Users
     {
         $geoArr = explode(",", GEOS);
 
-        if(in_array($user['post_code'], $geoArr))
-        {
+        if (in_array($user['post_code'], $geoArr)) {
 
-        return true;
+            return true;
 
         }
 
@@ -87,11 +86,14 @@ class Users
             $sql = "INSERT INTO users (`userid`, `phone`, `balance`, `total`) VALUES('{$user['userid']}',  '{$aphone}', '0','0')";
             $this->database->query($sql);
             $this->logger->add("Added new user " . $user['userid'], 'Users');
-            $this->message->sendSMS('+447493077820', 'Welcome Message', 'prod');
+            $this->message->sendSMS($aphone, 'Welcome Message', 'prod');
             $this->addBalance($user);
+
             return true;
+
         } else {
             $this->logger->add("User not allowed (bad phone number): " . $user['userid'], 'Users');
+
             return false;
         }
 
@@ -100,8 +102,12 @@ class Users
 
     private function filterPhone($user)
     {
-        if (preg_match(PHONEREGEX, $user['clad_phone'], $matches)) {
-            return $matches[0];
+        if (preg_match(PHONEREGEXBE, $user['clad_phone'], $matches)) {
+            return AREACODEBE.substr($matches[0],-9);
+        }
+
+        if (preg_match(PHONEREGEXLU, $user['clad_phone'], $matches)) {
+            return AREACODELU.substr($matches[0],-9);
         }
 
     }

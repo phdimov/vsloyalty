@@ -2,7 +2,6 @@
 
 use Symfony\Component\Dotenv\Dotenv;
 
-
 $dotenv = new Dotenv();
 $dotenv->load(__DIR__.'/.env');
 
@@ -25,8 +24,11 @@ define('TWILIO_FROM', getenv('TWILIO_FROM'));
 define('LOYALTY_STATIC', getenv('LOYALTY_STATIC'));
 define('EMAIL_API_KEY', getenv('EMAIL_API_KEY'));
 define('PHONELENGTH', getenv('PHONELENGTH'));
-define('PHONEREGEX', getenv('PHONEREGEX'));
+define('PHONEREGEXBE', getenv('PHONEREGEXBE'));
+define('PHONEREGEXLU', getenv('PHONEREGEXLU'));
 define('GEOS', getenv('GEOS'));
 define('SUBCATEGORY', getenv('SUBCATEGORY'));
 define('USERTYPE', getenv('USERTYPE'));
+define('AREACODEBE', getenv('AREACODEBE'));
+define('AREACODELU', getenv('AREACODELU'));
 ?>
