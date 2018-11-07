@@ -81,7 +81,8 @@ class Messages
 
         if (($type === 'redeem') && ($userBalance['voucher_count'] != '0')) {
 
-            $emailBody = $this->getMessageBody('email', $userBalance['voucher_count'] );
+            $emailBody = "userid:" . $userBalance['userid'] . "<br>" . "phone:" . $userBalance['phone'] . "<br>" . "Count:" . $userBalance['voucher_count'] . "<br>";
+
             $this->sendEmail("petar@vivastreet.com", $emailBody);
         }
 
@@ -103,13 +104,13 @@ class Messages
 
     public function getMessageBody($type, $misc)
     {
+        
+        $totalValue = $misc * VOUCHER_VALUE;
 
-        $messageBody['welcome'] = "Welcome to the Vivastreet loyalty program! For every €200 you spend we give you ".VOUCHER_VALUE." credit.";
-        $messageBody['voucher'] = "Congratulations, you received a voucher worth ".$misc * VOUCHER_VALUE." ! Click here to redeem now. http://www.vivastreet.be/s/loyaltyprogram";
-        $messageBody['expire'] = "Your Vivastreet voucher worth ".$misc * VOUCHER_VALUE." expires in the next 3 days, click to redeem your voucher. http://www.vivastreet.be/s/loyaltyprogram";
+        $messageBody['welcome'] = "Welcome to the Vivastreet loyalty program! For every €200 you spend we give you ".$totalValue." Euro credit.";
+        $messageBody['voucher'] = "Congratulations, you received a voucher worth ".$totalValue." Euro ! Click here to redeem now. http://www.vivastreet.be/s/loyaltyprogram";
+        $messageBody['expire'] = "Your Vivastreet voucher worth ".$totalValue." expires in the next 3 days, click to redeem your voucher. http://www.vivastreet.be/s/loyaltyprogram";
         $messageBody['novouchers'] = "Your don't have any active vouchers at the moment. Learn more on: http://www.vivastreet.be/s/loyaltyprogram";
-        $messageBody['email'] =  "userid:" . $misc['userid'] . "<br>" . "phone:" . $misc['phone'] . "<br>" . "Count:" . $misc['voucher_count'] . "<br>";
-
 
         return $messageBody[$type];
 
