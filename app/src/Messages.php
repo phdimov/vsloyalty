@@ -81,7 +81,7 @@ class Messages
 
         if (($type === 'redeem') && ($userBalance['voucher_count'] != '0')) {
 
-            $emailBody = $this->getMessageBody('email', $userBalance['voucher_count'], );
+            $emailBody = $this->getMessageBody('email', $userBalance['voucher_count'] );
             $this->sendEmail("petar@vivastreet.com", $emailBody);
         }
 
