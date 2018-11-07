@@ -61,23 +61,18 @@ class Messages
 
         $sql = "SELECT users.userid as 'userid', users.phone as 'phone', count(vouchers.id) as 'voucher_count'  FROM users join vouchers on users.userid = vouchers.userid WHERE RIGHT(phone, " . PHONELENGTH . ") = RIGHT('{$this->phone}'," . PHONELENGTH . ") AND vouchers.date_redeemed = '' AND DATE(vouchers.expires) > CURRENT_DATE ";
 
-        echo $sql;
 
         $result = $this->database->query($sql);
 
         $userBalance = $result->fetch_all(MYSQLI_ASSOC)[0];
 
-        if ($userBalance['voucher_count'] === '0') {
+        if ($userBalance['voucher_count'] > '0') {
 
-            $message = $this->getMessageBody($type, $userBalance, 'novouchers');
-
-        } elseif ($userBalance['voucher_count'] === '1') {
-
-            $message = $this->getMessageBody($type, $userBalance, 'single');
+            $message = $this->getMessageBody('voucher', $userBalance['voucher_count']);
 
         } else {
 
-            $message = $this->getMessageBody($type, $userBalance, 'plural');
+            $message = $this->getMessageBody('novoucher', $userBalance['voucher_count']);
 
         }
 
@@ -86,7 +81,7 @@ class Messages
 
         if (($type === 'redeem') && ($userBalance['voucher_count'] != '0')) {
 
-            $emailBody = $this->getMessageBody($type, $userBalance, 'email');
+            $emailBody = $this->getMessageBody('email', $userBalance['voucher_count'], );
             $this->sendEmail("petar@vivastreet.com", $emailBody);
         }
 
@@ -106,18 +101,17 @@ class Messages
 
     }
 
-    private function getMessageBody($type, $optionArr, $misc)
+    public function getMessageBody($type, $misc)
     {
 
-        $messageBody['redeem']['single'] ="Le montant de votre/vos voucher(s) Vivastreet est : " . $optionArr['voucher_count'] . " . Si vous souhaitez utiliser votre/vos voucher(s), veuillez cliquer sur le lien ci-dessous: ";
-        $messageBody['redeem']['plural'] = "Le montant de votre/vos voucher(s) Vivastreet est : " . $optionArr['voucher_count'] . " . Si vous souhaitez utiliser votre/vos voucher(s), veuillez cliquer sur le lien ci-dessous: ";
-        $messageBody['redeem']['novouchers'] = "You don't have any vouchers at the moment. Keep spending :)";
-        $messageBody['balance']['single'] = "Le montant de votre/vos voucher(s) Vivastreet est : " . $optionArr['voucher_count'] . " . Si vous souhaitez utiliser votre/vos voucher(s), veuillez cliquer sur le lien ci-dessous: ";
-        $messageBody['balance']['plural'] = "Le montant de votre/vos voucher(s) Vivastreet est : " . $optionArr['voucher_count'] . " . Si vous souhaitez utiliser votre/vos voucher(s), veuillez cliquer sur le lien ci-dessous: ";
-        $messageBody['balance']['novouchers'] = "You don't have any vouchers at the moment. Keep spending :)";
-        $messageBody['redeem']['email'] = "userid:" . $optionArr['userid'] . "<br>" . "phone:" . $optionArr['phone'] . "<br>" . "Count:" . $optionArr['voucher_count'] . "<br>";
+        $messageBody['welcome'] = "Welcome to the Vivastreet loyalty program! For every €200 you spend we give you ".VOUCHER_VALUE." credit.";
+        $messageBody['voucher'] = "Congratulations, you received a voucher worth ".$misc * VOUCHER_VALUE." ! Click here to redeem now. http://www.vivastreet.be/s/loyaltyprogram";
+        $messageBody['expire'] = "Your Vivastreet voucher worth ".$misc * VOUCHER_VALUE." expires in the next 3 days, click to redeem your voucher. http://www.vivastreet.be/s/loyaltyprogram";
+        $messageBody['novouchers'] = "Your don't have any active vouchers at the moment. Learn more on: http://www.vivastreet.be/s/loyaltyprogram";
+        $messageBody['email'] =  "userid:" . $misc['userid'] . "<br>" . "phone:" . $misc['phone'] . "<br>" . "Count:" . $misc['voucher_count'] . "<br>";
 
-        return $messageBody[$type][$misc];
+
+        return $messageBody[$type];
 
     }
 
@@ -137,11 +131,9 @@ class Messages
 
                 $phone = $result->fetch_all();
 
-                if ($u > 1) {
-                    $message = "Phone " . $phone['0']['0'] . " has $v new vouchers.";
-                } else {
-                    $message = "Phone " . $phone['0']['0'] . " has $v new voucher.";
-                }
+
+                    $message = $this->getMessageBody('voucher', $v);
+
 
                 $this->sendSMS( $phone['0']['0'] , $message, ENV);
                 $this->logger->add($message, 'UserNotification');
@@ -156,10 +148,8 @@ class Messages
         $sql = "SELECT count(vouchers.id) as 'count', vouchers.userid as 'userid', users.phone as 'phone' FROM `vouchers` JOIN users ON vouchers.userid = users.userid WHERE DATE(expires) = DATE_ADD(CURRENT_DATE, INTERVAL 3 DAY) GROUP BY userid";
         $result = $this->database->query($sql);
         foreach ($result->fetch_all(MYSQLI_ASSOC) as $row) {
-            if ($row['count'] === '1') {
-                $message = " You have " . $row['count'] . " expiring voucher in the next 7 days. Contact us today to redeem.";
-            } else {
-                $message = " You have " . $row['count'] . " expiring vouchers in the next 7 days. Contact us today to redeem.";
+            if ($row['count'] > 0) {
+                $message = $this->getMessageBody('expire', $row['count'] );
             }
             $this->sendSMS( $row['phone'], $message, ENV);
 

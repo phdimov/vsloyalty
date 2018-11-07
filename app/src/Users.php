@@ -86,7 +86,7 @@ class Users
             $sql = "INSERT INTO users (`userid`, `phone`, `balance`, `total`) VALUES('{$user['userid']}',  '{$aphone}', '0','0')";
             $this->database->query($sql);
             $this->logger->add("Added new user " . $user['userid'], 'Users');
-            $this->message->sendSMS($aphone, 'Welcome Message', 'prod');
+            $this->message->sendSMS($aphone, $this->message->getMessageBody('welcome', ''), 'prod');
             $this->addBalance($user);
 
             return true;
