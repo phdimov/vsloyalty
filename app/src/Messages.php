@@ -68,11 +68,11 @@ class Messages
 
         if ($userBalance['voucher_count'] > '0') {
 
-            $message = $this->getMessageBody('voucher', $userBalance['voucher_count']);
+            $message = $this->getMessageBody('incomingsms', $userBalance['voucher_count']);
 
         } else {
 
-            $message = $this->getMessageBody('novoucher', $userBalance['voucher_count']);
+            $message = $this->getMessageBody('novouchers', $userBalance['voucher_count']);
 
         }
 
@@ -95,7 +95,7 @@ class Messages
             '+32460202329',
             [
                 "body" => $message,
-                "from" => TWILIO_FROM
+                "from" => '+32460209483'
             ]);
 
         echo $message->sid;
@@ -107,10 +107,12 @@ class Messages
 
         $totalValue = $misc * VOUCHER_VALUE;
 
-        $messageBody['welcome'] = "Welcome to the Vivastreet loyalty program! For every €200 you spend we give you ".VOUCHER_VALUE." Euro credit.";
-        $messageBody['voucher'] = "Congratulations, you received a voucher worth ".$totalValue." Euro ! Click here to redeem now. http://www.vivastreet.be/s/loyaltyprogram";
-        $messageBody['expire'] = "Your Vivastreet voucher worth ".$totalValue." expires in the next 3 days, click to redeem your voucher. http://www.vivastreet.be/s/loyaltyprogram";
-        $messageBody['novouchers'] = "Your don't have any active vouchers at the moment. Learn more on: http://www.vivastreet.be/s/loyaltyprogram";
+        $messageBody['welcome'] = "Bienvenue sur notre programme de fidélité Vivastreet ! Pour chaque €200 dépensés nous vous offrons €".VOUCHER_VALUE." de remise.";
+        $messageBody['voucher'] = "Félicitations ! Vous avez reçu un voucher Vivastreet d'une valeur de €".$totalValue." ! Cliquez ici pour utiliser votre voucher.
+http://www.vivastreet.be/s/loyaltyprogram";
+        $messageBody['expire'] = "Votre voucher Vivastreet d'une valeur de ".$totalValue." expire dans 3 jours. Cliquez maintenant sur le lien ci-dessous pour utiliser votre voucher.";
+        $messageBody['incomingsms'] = "Vous bénéficiez de ".$misc." voucher(s) Vivastreet d'une valeur de ".$totalValue."€. Cliquez sur ce lien pour utiliser votre voucher http://www.vivastreet.be/s/loyaltyprogram";
+        $messageBody['novouchers'] = "Vous ne bénéficiez pour le moment d'aucun voucher Vivastreet. Pour plus d'informations, cliquez sur le lien https://www.vivastreet.works/loyalty_program/";
 
         return $messageBody[$type];
 
