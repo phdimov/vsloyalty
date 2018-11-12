@@ -114,7 +114,7 @@ http://www.vivastreet.be/s/loyaltyprogram";
         $messageBody['incomingsms'] = "Vous bénéficiez de ".$misc." voucher(s) Vivastreet d'une valeur de ".$totalValue."€. Cliquez sur ce lien pour utiliser votre voucher http://www.vivastreet.be/s/loyaltyprogram";
         $messageBody['novouchers'] = "Vous ne bénéficiez pour le moment d'aucun voucher Vivastreet. Pour plus d'informations, cliquez sur le lien https://www.vivastreet.works/loyalty_program/";
 
-        return utf8_decode(addcslashes($messageBody[$type]));
+        return utf8_decode(addslashes($messageBody[$type]));
 
     }
 
