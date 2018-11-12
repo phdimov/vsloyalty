@@ -24,9 +24,6 @@ class Database
 
     public function query($sql)
     {
-
-        $sql = $this->connection->real_escape_string($sql);
-
         $result = $this->connection->query($sql);
         $this->confirm_query($result);
         return $result;

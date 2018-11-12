@@ -33,7 +33,7 @@ Class Transactions
         $sql = "TRUNCATE `vouchers`";
         $this->database->query($sql);
         echo "DB truncated<br>";
-        $this->logger->add('DB Cleaned', 'Monitor');
+        $this->logger->add("DB Cleaned", "Monitor");
     }
 
     public function monitor()
