@@ -95,7 +95,7 @@ class Messages
             '+32460202329',
             [
                 "body" => $message,
-                "from" => '+32460209483'
+                "from" => TWILIO_FROM
             ]);
 
         echo $message->sid;
@@ -114,7 +114,7 @@ http://www.vivastreet.be/s/loyaltyprogram";
         $messageBody['incomingsms'] = "Vous bénéficiez de ".$misc." voucher(s) Vivastreet d'une valeur de ".$totalValue."€. Cliquez sur ce lien pour utiliser votre voucher http://www.vivastreet.be/s/loyaltyprogram";
         $messageBody['novouchers'] = "Vous ne bénéficiez pour le moment d'aucun voucher Vivastreet. Pour plus d'informations, cliquez sur le lien https://www.vivastreet.works/loyalty_program/";
 
-        return $messageBody[$type];
+        return utf8_decode(addcslashes($messageBody[$type]));
 
     }
 
