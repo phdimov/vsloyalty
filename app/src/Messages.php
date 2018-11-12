@@ -110,7 +110,7 @@ class Messages
         $messageBody['welcome'] = "Bienvenue sur notre programme de fidélité Vivastreet ! Pour chaque €200 dépensés nous vous offrons €".VOUCHER_VALUE." de remise.";
         $messageBody['voucher'] = "Félicitations ! Vous avez reçu un voucher Vivastreet d'une valeur de €".$totalValue." ! Cliquez ici pour utiliser votre voucher.
 http://www.vivastreet.be/s/loyaltyprogram";
-        $messageBody['expire'] = "Votre voucher Vivastreet d\'une valeur de ".$totalValue." expire dans 3 jours. Cliquez maintenant sur le lien ci-dessous pour utiliser votre voucher.";
+        $messageBody['expire'] = "Votre voucher Vivastreet d'une valeur de ".$totalValue." expire dans 3 jours. Cliquez maintenant sur le lien ci-dessous pour utiliser votre voucher.";
         $messageBody['incomingsms'] = "Vous bénéficiez de ".$misc." voucher(s) Vivastreet d\'une valeur de ".$totalValue."€. Cliquez sur ce lien pour utiliser votre voucher http://www.vivastreet.be/s/loyaltyprogram";
         $messageBody['novouchers'] = "Vous ne bénéficiez pour le moment d'aucun voucher Vivastreet. Pour plus d'informations, cliquez sur le lien https://www.vivastreet.works/loyalty_program/";
 
