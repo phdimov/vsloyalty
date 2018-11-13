@@ -12,7 +12,7 @@ class Logger
 
     public function add($message, $module)
     {
-
+        $message = addslashes($message);
         $sql = "INSERT INTO logger (`id`,`action`, `module`) VALUES('','{$message}', '$module')";
         $this->database->query($sql);
 

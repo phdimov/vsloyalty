@@ -20,6 +20,7 @@ class Messages
 
     private function addSMSLog($from, $to, $message, $messagesid)
     {
+        $message = addslashes($message);
         $sql = "SELECT userid from users where phone = '{$to}'";
         $result = $this->database->query($sql);
         $userid = $result->fetch_all()[0][0];
@@ -138,7 +139,7 @@ class Messages
 
 
                 $this->sendSMS( $phone['0']['0'] , $message, ENV);
-                $this->logger->add($message, 'UserNotification');
+                $this->logger->add('Added a new Voucher to '.$phone['0']['0'] , 'UserNotification');
 
             }
 
