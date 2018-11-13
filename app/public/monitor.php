@@ -1,6 +1,6 @@
 <?php
 include('../src/init.php');
-include('../public/cron.php');
+//include('../public/cron.php');
 
 // for testing
 //$transactions->truncateDb();
