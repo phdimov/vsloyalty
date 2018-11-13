@@ -39,7 +39,9 @@ class Messages
                     "from" => TWILIO_FROM
                 ]);
             $this->logger->add($to, 'WelcomeMessage');
-            $this->addSMSLog(TWILIO_FROM, $to, $message, $sms->sid);
+            //hack to format message so it can be added to DB logging table
+            $smsLogMessage = utf8_decode(addslashes($message));
+            $this->addSMSLog(TWILIO_FROM, $to, $smsLogMessage, $sms->sid);
 
             return $sms->sid;
         }
