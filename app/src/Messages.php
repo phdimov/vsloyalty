@@ -108,7 +108,7 @@ class Messages
 
         $totalValue = $misc * VOUCHER_VALUE;
 
-        $messageBody['welcome'] = "Bienvenue sur notre programme de fidélité Vivastreet ! Pour chaque €200 dépensés nous vous offrons ".VOUCHER_VALUE."€ de remise.";
+        $messageBody['welcome'] = "Bienvenue sur notre programme de fidélité Vivastreet ! Pour chaque 200€ dépensés nous vous offrons ".VOUCHER_VALUE."€ de remise.";
         $messageBody['voucher'] = "Félicitations ! Vous avez reçu un coupon Vivastreet d'une valeur de ".$totalValue."€ ! Cliquez ici pour utiliser votre coupon www.vivastreet.be/s/loyaltyprogram";
         $messageBody['expire'] = "Votre coupon Vivastreet d'une valeur de ".$totalValue."€ expire dans 3 jours. Cliquez maintenant sur le lien ci-dessous pour utiliser votre coupon.";
         $messageBody['incomingsms'] = "Vous bénéficiez de ".$misc." coupon(s) Vivastreet d'une valeur de ".$totalValue."€. Cliquez sur ce lien pour utiliser votre coupon www.vivastreet.be/s/loyaltyprogram";
